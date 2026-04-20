@@ -1,0 +1,52 @@
+import pytest
+from app import app
+
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        yield client
+
+
+#TEST 1
+def test_health_check(client):
+    response = client.get('/api/health')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['status'] == 'ok'
+
+#TEST 2
+def test_get_students(client):
+    response = client.get('/api/students')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert isinstance(data, list)
+
+#TEST 3
+def test_get_student_not_found(client):
+    response = client.get('/api/students/9999')
+    assert response.status_code == 404
+
+#TEST 4
+def test_add_student(client):
+    new_student = {'name':'malika shoaib hassan chaudry', 'grade': 'shit'}
+    response = client.post('/api/students', json = new_student)
+    assert response.status_code == 201
+    data = response.get_json()
+    assert data['name'] == 'malika shoaib hassan chaudry'
+
+#TEST 5
+def test_add_student_missing_field(client):
+    new_student = {'name':'jaris'}
+    response = client.post('/api/students', json = new_student)
+    assert response.status_code == 400
+
+#TEST 6
+def test_get_student_found(client):
+    response = client.get('/api/students/1')
+    assert response.status_code == 200
+    data = response.get_json()
+    print(data)
+    assert data['grade'] == 'shit'
+
+
