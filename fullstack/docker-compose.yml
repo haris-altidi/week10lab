@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  # Service 1: Flask backend API
+  api:
+    build: ./api # Build image from ./api/Dockerfile
+    container_name: flask-api
+    ports:
+    - '5000:5000' # host:container port mapping
+    environment:
+    - FLASK_ENV=development
+    volumes:
+    - ./api:/app # Mount code for live reload during dev
+    networks:
+    - app-network
+  
+  # Service 2: Simple web server for the frontend
+  frontend:
+    image: nginx:alpine # Use official nginx image directly
+    container_name: frontend
+    ports:
+    - '8080:80' # Serve frontend on host port 8080
+    volumes:
+    - ./frontend:/usr/share/nginx/html # Mount our HTML files
+    networks:
+    - app-network
+    depends_on:
+    - api # Start api container before frontend
+
+networks:
+  app-network: # Custom network so containers can talk
+    driver: bridge

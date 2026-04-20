@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Student's list</h1>
+    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odit animi ipsa laudantium impedit assumenda. A
+        spernatur consequuntur repellendus nobis distinctio quia dolorum impedit quos, ipsam maiores accusantium, per
+        spiciatis culpa nam excepturi.</p>
+    <ul id="students">
+        <li>A</li>
+        <li>B</li>
+        <li>C</li>
+    </ul>
+    <script>
+    fetch("http://localhost:5000/api/students")
+    .then(response => response.json())
+    .then(data => {
+        const list = document.getElementById('students');
+        list.innerHTML = data
+            .map(s => `<li>${JSON.stringify(s)}</li>`)
+            .join("");
+    })
+    .catch(err => {             
+        document.getElementById('students').innerHTML =
+            '<li>could not connect to api ' + err + '</li>';
+    });
+</script>
+</body>
+</html>
